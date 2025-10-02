@@ -56,11 +56,16 @@ module "app_security_group" {
   }
 }
 
+resource "random_string" "lb_id" {
+  length  = 3
+  special = false
+}
+
 module "lb_security_group" {
   source  = "terraform-aws-modules/security-group/aws//modules/web"
   version = "3.17.0"
 
-  name        = "lb-sg-project-alpha-dev"
+  name        = "lb-${random_string.lb_id.result}-sg-project-alpha-dev"
   description = "Security group for load balancer with HTTP ports open within VPC"
   vpc_id      = module.vpc.vpc_id
 
@@ -82,10 +87,6 @@ module "lb_security_group" {
   }
 }
 
-resource "random_string" "lb_id" {
-  length  = 3
-  special = false
-}
 
 module "elb_http" {
   source  = "terraform-aws-modules/elb/aws"
