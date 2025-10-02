@@ -56,21 +56,16 @@ module "app_security_group" {
   }
 }
 
-resource "random_string" "lb_id" {
-  length  = 3
-  special = false
-}
-
 module "lb_security_group" {
   source  = "terraform-aws-modules/security-group/aws//modules/web"
   version = "3.17.0"
 
-  name        = "lb-${random_string.lb_id.result}-sg-project-alpha-dev"
+  name        = "lb-sg-project-alpha-dev"
   description = "Security group for load balancer with HTTP ports open within VPC"
   vpc_id      = module.vpc.vpc_id
 
   ingress_cidr_blocks = ["10.0.0.0/16"]
-  ingress_rules       = ["ssh-tcp"]
+  #ingress_rules       = ["ssh-tcp"]
   ingress_with_cidr_blocks = [
     {
       from_port   = 22
@@ -87,6 +82,10 @@ module "lb_security_group" {
   }
 }
 
+resource "random_string" "lb_id" {
+  length  = 3
+  special = false
+}
 
 module "elb_http" {
   source  = "terraform-aws-modules/elb/aws"
